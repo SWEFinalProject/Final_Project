@@ -117,32 +117,22 @@ db.create_all()
 @app.route("/", methods=["POST", "GET"])
 def login():
     if flask.request.method == "POST":
-        login_inp = flask.request.form.get("username")
-        pd = flask.request.form.get("password")
+        username = flask.request.json["username"]
+        pd = flask.request.json["password"]
         pd_hash = hashlib.md5(pd.encode("utf-8")).hexdigest()
-        # us = User.query.filter_by(username = login_inp).first()
-        # print(User.query.filter_by(username = login_inp).first())
-
-        if db.engine.execute(
-            f""" select * from "user" where username='{login_inp}' and password='{pd_hash}' """
-        ).all():
-            print(
-                db.engine.execute(
-                    f"""select * from "user" where username='{login_inp}' and password='{pd_hash}' """
-                ).all()
-            )
-            return flask.redirect("/pmain")
-        # if User.query.filter_by(username = login_inp).first() and \
-        # User.query.filter_by(password=hashlib.md5(pd.encode("utf-8")).hexdigest()):
-
+        isUser = Users.query.filter_by(username=username).first()
+        if not isUser:
+            return flask.jsonify({"error": "Not found"}), 404
         else:
-            print("abracadabra")
-            flask.flash("Username or password is incorrect. Please try again!")
-            return flask.redirect("/smthwrong")
+            if not check_password_hash(isUser.password, pd_hash):
+                return flask.jsonify({"error": "Unathorized"}), 401
+        return flask.jsonify({"id": isUser.id, "username": isUser.username})
 
-    return flask.render_template(
-        ["login.html"],
-    )
+@app.route("/register", methods=["POST", "GET"])
+def register():
+    pass
+
+
 
 
 @login_manager.user_loader
@@ -263,10 +253,6 @@ app.register_blueprint(bp)
 
 
 app.run(debug=True)
-
-# DB - https://dashboard.heroku.com/apps/radiant-waters-19745
-# Heroku app -
-# Test
 
 if __name__ == "__main__":
     app.run(
