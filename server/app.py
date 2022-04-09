@@ -1,4 +1,3 @@
-
 import os
 import flask
 
@@ -19,7 +18,7 @@ load_dotenv(find_dotenv())
 
 app = flask.Flask(__name__)
 # Point SQLAlchemy to your Heroku database
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+# app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB")
 # Gets rid of a warning
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["DEBUG"] = True

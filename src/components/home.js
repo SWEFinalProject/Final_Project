@@ -11,10 +11,20 @@ import Form from "react-bootstrap/Form";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function landingPage() {
+  const navigate = () => {
+    window.location.href = "/comments";
+  };
   return (
     <AppContainer>
       <div className="search">
-        <Button left="10px" top="10px" color="red" width="56px" height="58px">
+        <Button
+          left="10px"
+          top="10px"
+          color="red"
+          width="56px"
+          height="58px"
+          onClick={navigate}
+        >
           options
         </Button>
         <Button left="90%" top="10px" color="red">
