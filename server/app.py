@@ -1,6 +1,5 @@
-"""PLACEHOLDER to describe app.py"""
 import os
-import flask
+from flask import Flask, session, request, jsonify
 from sqlalchemy import PrimaryKeyConstraint
 from api_setup import get_data, get_config
 from flask_sqlalchemy import SQLAlchemy
@@ -256,5 +255,11 @@ app.register_blueprint(bp)
 
 app.run(debug=True)
 
+<<<<<<< HEAD
 # DB - https://dashboard.heroku.com/apps/radiant-waters-19745
 # Heroku app -
+=======
+# Test
+app.run(host=os.getenv("IP", "0.0.0.0"), port=int(os.getenv("PORT", 8080)), debug=True)
+>>>>>>> main
+>>>>>>> main
