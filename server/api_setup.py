@@ -12,5 +12,6 @@ load_dotenv(find_dotenv())
 def get_data():
     pass
 
+
 def get_config():
     pass
