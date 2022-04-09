@@ -4,6 +4,7 @@ import flask
 from sqlalchemy import PrimaryKeyConstraint
 from api_setup import get_data, get_config
 from flask_sqlalchemy import SQLAlchemy
+import flask_login as fl
 import hashlib
 from dotenv import load_dotenv, find_dotenv
 
@@ -30,6 +31,11 @@ if app.config["SQLALCHEMY_DATABASE_URI"].startswith("postgres://"):
         "SQLALCHEMY_DATABASE_URI"
     ].replace("postgres://", "postgresql://")
 
+login_manager = fl.LoginManager(app)
+login_manager.login_view = "login"
+login_manager.init_app(app)
+
+
 bp = flask.Blueprint(
     "bp",
     __name__,
@@ -49,7 +55,7 @@ chat_table = db.Table(
 )
 
 
-class User(db.Model):
+class User(fl.UserMixin, db.Model):
     """Defines each user of program, connects to Comments"""
 
     __tablename__ = "user"
@@ -141,6 +147,7 @@ def login():
 
 
 @app.route("/pmain", methods=["POST", "GET"])  # was /loggeduser
+@fl.login_required
 def main():
     if flask.request.method == "POST":
         # if flask.request.json.get("action") == "profile":
@@ -180,6 +187,7 @@ def main():
 
 
 @app.route("/restaurant", methods=["POST", "GET"])
+@fl.login_required
 def restaurant():
     return flask.render_template("restaurant.html")
 
@@ -198,6 +206,7 @@ def profile():
 SHOULD BE A REACT PAGE"""
 # route for serving React page
 @bp.route("/")
+@fl.login_required
 def index():
     # NB: DO NOT add an "index.html" file in your normal templates folder
     # Flask will stop serving this React page correctly
@@ -206,6 +215,7 @@ def index():
 
 # CREATED NEW ROUTE for serving Flask page
 @bp.route("/chat", methods=["POST"])
+@fl.login_required
 def chat():  # should return a JSON file with a fun fact in it
     chats = ["Hi there! It is our chat page"]
     return flask.jsonify(chats)
@@ -242,26 +252,6 @@ def chat():  # should return a JSON file with a fun fact in it
 app.register_blueprint(bp)
 
 # @app.route("/loggeduser", methods=["POST", "GET"])
-def review_page(data):
-    # if flask.request.method == "POST":
-    mov_id = dict(data)["MovieID"]
-    uname = dict(data)["uname"]
-    Rating = dict(data)["Rating"]
-    Comment = dict(data)["Comment"]
-    db.session.add(
-        Review(
-            movie_id=mov_id,
-            rating=Rating,
-            comment=Comment,
-            user=uname,
-        )
-    )
-    db.session.commit()
-
-    # uname = flask.request.form.get("uname")
-    # return flask.render_template(
-    #     ["index.html"],
-    #     uname=uname)
 
 
 app.run(debug=True)
