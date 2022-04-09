@@ -1,5 +1,7 @@
 import os
-from flask import Flask, session, request, jsonify
+import flask
+
+# import session, request, jsonify
 from sqlalchemy import PrimaryKeyConstraint
 from api_setup import get_data, get_config
 from flask_sqlalchemy import SQLAlchemy
@@ -23,7 +25,7 @@ app.config["DEBUG"] = True
 app.config["SECRET_KEY"] = os.getenv("secret_key")
 
 
-db = SQLAlchemy.SQLAlchemy(app)
+db = SQLAlchemy(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB")
 if app.config["SQLALCHEMY_DATABASE_URI"].startswith("postgres://"):
     app.config["SQLALCHEMY_DATABASE_URI"] = app.config[
@@ -142,6 +144,12 @@ def login():
     )
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    """Load user for login manager"""
+    return User.query.get(int(user_id))
+
+
 """PLACEHOLDER for the route to the main page"""
 
 
@@ -255,11 +263,10 @@ app.register_blueprint(bp)
 
 app.run(debug=True)
 
-<<<<<<< HEAD
 # DB - https://dashboard.heroku.com/apps/radiant-waters-19745
 # Heroku app -
-=======
 # Test
-app.run(host=os.getenv("IP", "0.0.0.0"), port=int(os.getenv("PORT", 8080)), debug=True)
->>>>>>> main
->>>>>>> main
+if __name__ == "__main__":
+    app.run(
+        host=os.getenv("IP", "0.0.0.0"), port=int(os.getenv("PORT", 8080)), debug=True
+    )
