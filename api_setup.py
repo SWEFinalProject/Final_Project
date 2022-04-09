@@ -9,3 +9,8 @@ from dotenv import find_dotenv, load_dotenv
 load_dotenv(find_dotenv())
 
 
+def get_data():
+    pass
+
+def get_config():
+    pass
