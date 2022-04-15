@@ -122,10 +122,10 @@ def login():
         isUser = Users.query.filter_by(username=username).first()
         if not isUser:
             return flask.jsonify({"error": "Not found"}), 404
-        else:
-            if not check_password_hash(isUser.password, pd_hash):
-                return flask.jsonify({"error": "Unathorized"}), 401
+        if not check_password_hash(isUser.password, pd_hash):
+            return flask.jsonify({"error": "Unathorized"}), 401
         return flask.jsonify({"id": isUser.id, "username": isUser.username})
+    return flask.jsonify("Not post request")
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
