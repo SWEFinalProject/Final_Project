@@ -1,6 +1,6 @@
 import os
 import flask
-
+from model import User, Restaurant, Chatroom, Ct
 # import session, request, jsonify
 from sqlalchemy import PrimaryKeyConstraint
 from api_setup import get_data, get_config
@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 import flask_login as fl
 import hashlib
 from dotenv import load_dotenv, find_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 """FLASK-login manager"""
@@ -45,72 +46,11 @@ bp = flask.Blueprint(
 
 """Database classes + table"""
 
-chat_table = db.Table(
-    # Table combining many to many relationship with reviews table
-    "chat_table",
-    db.Column("ct_id", db.Integer, db.ForeignKey("ct.id"), primary_key=True),
-    db.Column("user_id", db.String(30), db.ForeignKey("user.gsu_id"), primary_key=True),
-    db.Column(
-        "chatroom_id", db.Integer, db.ForeignKey("chatroom.id"), primary_key=True
-    ),
-)
+db.init_app(app)
+with app.app_context():
+    db.create_all()
+    user = User.query.all()
 
-
-class User(fl.UserMixin, db.Model):
-    """Defines each user of program, connects to Comments"""
-
-    __tablename__ = "user"
-    id = db.Column(db.Integer, unique=True)
-    gsu_id = db.Column(db.String(30), unique=True, primary_key=True, nullable=False)
-    f_name = db.Column(db.String(30), unique=False, nullable=False)
-    l_name = db.Column(db.String(50), unique=False, nullable=False)
-    level = db.Column(db.String(20), unique=False, nullable=False)
-    primary_major = db.Column(
-        db.String(30), unique=False, nullable=False, default="undecided"
-    )
-    chat_table = db.relationship(
-        "Ct",
-        secondary="chat_table",
-        lazy="subquery",
-        backref=db.backref("users", lazy=True),
-    )
-
-    def __repr__(self):
-        return f"{self.gsu_id}"
-
-
-class Restaurant(db.Model):
-    __tablename__ = "restaurant"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
-    address = db.Column(db.String(80), unique=False, nullable=False)
-    rating = db.Column(db.Float, default=0)
-    price = db.Column(db.Integer)
-
-    def __repr__(self):
-        return f"{self.name}"
-
-
-class Chatroom(db.Model):
-    __tablename__ = "chatroom"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
-    chat_table = db.relationship(
-        "Ct",
-        secondary="chat_table",
-        lazy="subquery",
-        backref=db.backref("chatrooms", lazy=True),
-    )
-
-    def __repr__(self):
-        return f"{self.name}"
-
-
-class Ct(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-
-
-db.create_all()
 
 
 @app.route("/", methods=["POST", "GET"])
@@ -126,12 +66,6 @@ def login():
             return flask.jsonify({"error": "Unathorized"}), 401
         return flask.jsonify({"id": isUser.id, "username": isUser.username})
     return flask.jsonify("Not post request")
-
-@app.route("/register", methods=["POST", "GET"])
-def register():
-    pass
-
-
 
 
 @login_manager.user_loader
@@ -219,31 +153,36 @@ def chat():  # should return a JSON file with a fun fact in it
 
 
 # register function implemented with hashing
-# @app.route("/register", methods=["POST", "GET"])
-# def register():
-#     if flask.request.method == "POST":
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    """registration"""
+    # pylint: disable=no-member
+    if flask.request.method == "POST":
+        f_name =  flask.request.json["f_name"]
+        l_name =  flask.request.json["l_name"]
+        gsu_id =  flask.request.json["gsu_id"]
+        level =  flask.request.json["level"]
+        phone =  flask.request.json["phone"]
+        password =  flask.request.json["password"]
+        primary_major =  flask.request.json["primary_major"]
 
-#         sign_inp = flask.request.form.get("username")
-#         pd = flask.request.form.get("password")
-#         #us = User.query.filter_by(username = login_inp).first()
-#         db.engine.execute('SELECT * FROM "user";').all()
+        hashed_password = generate_password_hash(password, method="sha256")
+        user_exists = User.query.filter_by(gsu_id=gsu_id).first()
+        if user_exists:
+             return flask.jsonify({"error": "Unauthorized"}), 401
 
+        new_user = User(
+            f_name=f_name,
+            l_name=l_name,
+            gsu_id=gsu_id,
+            level=level,
+            primary_major = primary_major,
 
-#         if User.query.filter_by(username = sign_inp).first():
-
-#             flask.flash('User already present. Try logging in !!')
-
-#             return flask.redirect("/")
-#         else:
-#             db.session.add(User(username=sign_inp, password=hashlib.md5(pd.encode("utf-8")).hexdigest()))
-#             db.session.commit()
-#             flask.flash('User successfully created!!!')
-#             return flask.redirect("/")
-
-#     return flask.render_template(
-#         ["register.html"],
-#         #log_
-#         )
+        )
+        db.session.add(new_user)
+        db.session.commit()
+    return flask.jsonify({"id": new_user.id, "gsu_id": new_user.gsu_id})
+    # return flask.jsonify({"message": "success"})
 
 
 app.register_blueprint(bp)
@@ -258,3 +197,10 @@ if __name__ == "__main__":
         host=os.getenv("IP", "0.0.0.0"), port=int(os.getenv("PORT", 8080)), debug=True
     )
     
+# {
+#     "f_name" : "Nur",
+#     "l_name": "Haque",
+#     "gsu_id" : "1234",
+#     "level": "undergrad",
+#     "primary_major" : "Computer science"
+# }
