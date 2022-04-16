@@ -27,7 +27,14 @@ export default function landingPage() {
         >
           options
         </Button>
-        <Button left="90%" top="10px" color="red">
+        <Button
+          left="90%"
+          top="10px"
+          color="red"
+          onClick={() => {
+            window.location.href = "/profile";
+          }}
+        >
           <img
             src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
             alt="LoginLogo"
