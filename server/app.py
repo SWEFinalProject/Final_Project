@@ -4,7 +4,7 @@ import flask
 
 # import session, request, jsonify
 from sqlalchemy import PrimaryKeyConstraint
-from api_setup import get_data, get_config
+from api_setup import get_data
 from flask_sqlalchemy import SQLAlchemy
 import flask_login as fl
 import hashlib
@@ -112,6 +112,20 @@ class Ct(db.Model):
 
 
 db.create_all()
+
+@app.route("/get_all_restaurants",methods=["GET"])
+def get_all_restaurants():
+    rest_list = db.engine.execute(f""" select * from "restaurant"  """).all()
+    pass
+    #rest_name = [rest1, rest2, ...]
+
+@app.route("/get_business_data/<name>",methods=["GET"]) # name is a value (restaurant's name)
+def get_business_data(name):
+    """Usage: localhost:5000/get_business_data/cafe lucia """
+    return get_data(name)
+   
+
+
 
 
 @app.route("/", methods=["POST", "GET"])
