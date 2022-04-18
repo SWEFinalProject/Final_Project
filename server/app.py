@@ -1,8 +1,17 @@
+"""Main backend file"""
+# pylint: disable=E0401
+# disabled because of imports
+
+# pylint: disable=R0903
+# disabled because it didn't like that the db classes have no methods
+
+# pylint: disable=R1705
+# disabled because it was angry at my necessary else statements
+# after if statements with return functions
+
 
 import os
 import flask
-
-# import session, request, jsonify
 from sqlalchemy import PrimaryKeyConstraint
 from api_setup import get_data, get_config
 from flask_sqlalchemy import SQLAlchemy
@@ -10,9 +19,7 @@ import flask_login as fl
 import hashlib
 from dotenv import load_dotenv, find_dotenv
 
-
-"""FLASK-login manager"""
-
+# FLASK-login manager
 
 load_dotenv(find_dotenv())
 
@@ -44,11 +51,10 @@ bp = flask.Blueprint(
     template_folder="./static/react",
 )
 
-"""Database classes + table"""
+# Database classes + table
 
 chat_table = db.Table(
-    # Table combining many to many relationship with reviews table
-    "chat_table",
+    """Table combining many to many relationship with reviews table""" "chat_table",
     db.Column("ct_id", db.Integer, db.ForeignKey("ct.id"), primary_key=True),
     db.Column("user_id", db.String(30), db.ForeignKey("user.gsu_id"), primary_key=True),
     db.Column(
@@ -69,6 +75,10 @@ class User(fl.UserMixin, db.Model):
     primary_major = db.Column(
         db.String(30), unique=False, nullable=False, default="undecided"
     )
+
+    alt_email = db.Column(db.String(120), unique=False, nullable=True)
+    phone = db.Column(db.String(20), unique=False, nullable=False)
+
     chat_table = db.relationship(
         "Ct",
         secondary="chat_table",
@@ -81,18 +91,23 @@ class User(fl.UserMixin, db.Model):
 
 
 class Restaurant(db.Model):
+    """Defines restaurants near campus"""
+
     __tablename__ = "restaurant"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     address = db.Column(db.String(80), unique=False, nullable=False)
     rating = db.Column(db.Float, default=0)
     price = db.Column(db.Integer)
+    pic = db.Column(db.String(400), unique=True, nullable=False)
 
     def __repr__(self):
         return f"{self.name}"
 
 
 class Chatroom(db.Model):
+    """Defines individual chat rooms"""
+
     __tablename__ = "chatroom"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
@@ -108,6 +123,8 @@ class Chatroom(db.Model):
 
 
 class Ct(db.Model):
+    """Defines table"""
+
     id = db.Column(db.Integer, primary_key=True)
 
 
@@ -116,23 +133,24 @@ db.create_all()
 
 @app.route("/", methods=["POST", "GET"])
 def login():
+    """Login page"""
     if flask.request.method == "POST":
         username = flask.request.json["username"]
-        pd = flask.request.json["password"]
-        pd_hash = hashlib.md5(pd.encode("utf-8")).hexdigest()
-        isUser = Users.query.filter_by(username=username).first()
-        if not isUser:
+        p_d = flask.request.json["password"]
+        pd_hash = hashlib.md5(p_d.encode("utf-8")).hexdigest()
+        is_user = User.query.filter_by(username=username).first()
+        if not is_user:
             return flask.jsonify({"error": "Not found"}), 404
         else:
-            if not check_password_hash(isUser.password, pd_hash):
+            if not hashlib.check_password_hash(is_user.password, pd_hash):
                 return flask.jsonify({"error": "Unathorized"}), 401
-        return flask.jsonify({"id": isUser.id, "username": isUser.username})
+        return flask.jsonify({"id": is_user.id, "username": is_user.username})
+
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
+    """Register page placeholder"""
     pass
-
-
 
 
 @login_manager.user_loader
@@ -147,13 +165,13 @@ def load_user(user_id):
 @app.route("/pmain", methods=["POST", "GET"])  # was /loggeduser
 @fl.login_required
 def main():
+    """main page"""
     if flask.request.method == "POST":
         # if flask.request.json.get("action") == "profile":
         #     return flask.redirect("/profile")
         # elif flask.request.json.get("action") == "submit":
         #     # funtion call to handle functionality for submit action(similar to else below)
         #     pass
-        review_page(flask.request.form)
         return flask.redirect("/on_submit_button")
 
     else:
@@ -236,7 +254,8 @@ def chat():  # should return a JSON file with a fun fact in it
 
 #             return flask.redirect("/")
 #         else:
-#             db.session.add(User(username=sign_inp, password=hashlib.md5(pd.encode("utf-8")).hexdigest()))
+#             db.session.add(User(username=sign_inp,
+#               password=hashlib.md5(pd.encode("utf-8")).hexdigest()))
 #             db.session.commit()
 #             flask.flash('User successfully created!!!')
 #             return flask.redirect("/")
@@ -258,4 +277,3 @@ if __name__ == "__main__":
     app.run(
         host=os.getenv("IP", "0.0.0.0"), port=int(os.getenv("PORT", 8080)), debug=True
     )
-    
