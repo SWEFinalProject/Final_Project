@@ -166,7 +166,7 @@ def register():
         primary_major =  flask.request.json["primary_major"]
 
         hashed_password = generate_password_hash(password, method="sha256")
-        user_exists = User.query.filter_by(gsu_id=gsu_id).first()
+        user_exists = Users.query.filter_by(gsu_id=gsu_id).first()
         if user_exists:
              return flask.jsonify({"error": "Unauthorized"}), 401
 
