@@ -1,32 +1,25 @@
 import os
 import flask
-from model import User, Restaurant, Chatroom, Ct
-# import session, request, jsonify
+from model import Users, Restaurant, Chatroom, Ct
 from sqlalchemy import PrimaryKeyConstraint
+from database import db
 from api_setup import get_data
-from flask_sqlalchemy import SQLAlchemy
 import flask_login as fl
 import hashlib
-from dotenv import load_dotenv, find_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
+from config import ApplicationConfig
 
 
 """FLASK-login manager"""
-
-
-load_dotenv(find_dotenv())
-
-
 app = flask.Flask(__name__)
-# Point SQLAlchemy to your Heroku database
-# app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB")
-# Gets rid of a warning
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["DEBUG"] = True
-app.config["SECRET_KEY"] = os.getenv("secret_key")
+app.config.from_object(ApplicationConfig)
 
 
-db = SQLAlchemy(app)
+db.init_app(app)
+with app.app_context():
+    db.create_all()
+    user = Users.query.all()
+
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB")
 if app.config["SQLALCHEMY_DATABASE_URI"].startswith("postgres://"):
     app.config["SQLALCHEMY_DATABASE_URI"] = app.config[
@@ -45,15 +38,6 @@ bp = flask.Blueprint(
 )
 
 """Database classes + table"""
-
-db.init_app(app)
-with app.app_context():
-    db.create_all()
-    user = User.query.all()
-
-
-class Ct(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
 
 
 @app.route("/get_all_restaurants",methods=["GET"])
@@ -186,7 +170,7 @@ def register():
         if user_exists:
              return flask.jsonify({"error": "Unauthorized"}), 401
 
-        new_user = User(
+        new_user = Users(
             f_name=f_name,
             l_name=l_name,
             gsu_id=gsu_id,
@@ -205,7 +189,6 @@ app.register_blueprint(bp)
 # @app.route("/loggeduser", methods=["POST", "GET"])
 
 
-app.run(debug=True)
 
 if __name__ == "__main__":
     app.run(
