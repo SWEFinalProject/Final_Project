@@ -4,7 +4,7 @@ import { Comment, Groups, GroupComment } from "./styles/comments.style";
 import { GroupTab, Labels } from "./styles/GroupTab.style";
 import { CommentBox } from "./styles/commentBox.style";
 
-let endPoint = "http://localhost:5000";
+let endPoint = "http://172.25.35.67:8080/";
 let socket = io.connect(`${endPoint}`);
 
 const App = () => {

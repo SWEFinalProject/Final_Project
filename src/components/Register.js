@@ -9,6 +9,7 @@ function Register() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [primary_major, setPrimary_major] = useState("");
+  const [alt_email, setAlt_email] = useState("");
   const authenticate = async () => {
     const data = {
       f_name,
@@ -18,7 +19,9 @@ function Register() {
       phone,
       password,
       primary_major,
+      alt_email,
     };
+
     const responce = await fetch("/register", {
       method: "POST",
       headers: {
@@ -31,8 +34,10 @@ function Register() {
     if (responce.status == 401) {
       // window.location.href = "/login";
       console.log("Register unsuccessful");
-    } else {
+    } else if (responce.status == 200) {
       console.log("Register Successful");
+    } else {
+      console.log("Register unsuccessful");
     }
   };
   return (
@@ -104,6 +109,16 @@ function Register() {
           type="password"
           required
           onChange={(e) => setPassword(e.target.value)}
+        ></input>
+
+        <br />
+        <br />
+
+        <label>Alternate Email: </label>
+        <input
+          type="text"
+          required
+          onChange={(e) => setAlt_email(e.target.value)}
         ></input>
 
         <br />
