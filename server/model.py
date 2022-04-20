@@ -11,10 +11,11 @@ chat_table = db.Table(
     ),
 )
 
+
 class User(UserMixin, db.Model):
     """Defines each user of program, connects to Comments"""
 
-    __tablename__ = "user"
+    __tablename__ = "users"
     id = db.Column(db.Integer, unique=True)
     gsu_id = db.Column(db.String(30), unique=True, primary_key=True, nullable=False)
     f_name = db.Column(db.String(30), unique=False, nullable=False)
@@ -23,6 +24,9 @@ class User(UserMixin, db.Model):
     primary_major = db.Column(
         db.String(30), unique=False, nullable=False, default="undecided"
     )
+    alt_email = db.Column(db.String(120), unique=False, nullable=True)
+    phone = db.Column(db.String(20), unique=False, nullable=False)
+
     chat_table = db.relationship(
         "Ct",
         secondary="chat_table",
