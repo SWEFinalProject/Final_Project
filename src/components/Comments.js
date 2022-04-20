@@ -1,24 +1,41 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import io from "socket.io-client";
 import { Comment, Groups, GroupComment } from "./styles/comments.style";
 import { GroupTab, Labels } from "./styles/GroupTab.style";
 import { CommentBox } from "./styles/commentBox.style";
 
-function Comments() {
-  const [state, setState] = useState("");
-  const [comment, setCurrentComment] = useState("");
-  function fetchAPI() {
-    fetch("/api")
-      .then((response) => {
-        if (response.status == 200) {
-          return response.json();
-        }
-      })
-      .then((data) => console.log(data))
-      .then((error) => console.log(error));
-  }
+let endPoint = "http://localhost:5000";
+let socket = io.connect(`${endPoint}`);
+
+const App = () => {
+  const [messages, setMessages] = useState(["Hello And Welcome"]);
+  const [message, setMessage] = useState("");
+
   useEffect(() => {
-    fetchAPI();
-  }, []);
+    getMessages();
+  }, [messages.length]);
+
+  const getMessages = () => {
+    socket.on("message", (msg) => {
+      setMessages([...messages, msg]);
+    });
+  };
+
+  // On Change
+  const onChange = (e) => {
+    setMessage(e.target.value);
+  };
+
+  // On Click
+  const onClick = () => {
+    if (message !== "") {
+      socket.emit("message", message);
+      setMessage("");
+    } else {
+      alert("Please Add A Message");
+    }
+  };
+
   return (
     <Comment>
       <Groups>
@@ -40,17 +57,19 @@ function Comments() {
       </Groups>
 
       <GroupComment>
-        <h3>{comment}</h3>
-        <CommentBox action="">
-          <input
-            type="text"
-            required
-            onChange={(e) => setCurrentComment(e.target.value)}
-          ></input>
-          <input type="submit" />
+        {messages.length > 0 &&
+          messages.map((msg) => (
+            <div>
+              <p>{msg}</p>
+            </div>
+          ))}
+        <CommentBox>
+          <input value={message} name="message" onChange={(e) => onChange(e)} />
+          <button onClick={() => onClick()}>Send Message</button>
         </CommentBox>
       </GroupComment>
     </Comment>
   );
-}
-export default Comments;
+};
+
+export default App;
