@@ -32,10 +32,9 @@ function Register() {
     });
     console.dir(responce.status);
     if (responce.status == 401) {
-      // window.location.href = "/login";
       console.log("Register unsuccessful");
     } else if (responce.status == 200) {
-      console.log("Register Successful");
+      window.location.href = "/login";
     } else {
       console.log("Register unsuccessful");
     }

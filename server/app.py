@@ -11,11 +11,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from config import ApplicationConfig
 from flask_socketio import SocketIO, send
 
-
 app = flask.Flask(__name__)
 app.config.from_object(ApplicationConfig)
-
-
 db.init_app(app)
 with app.app_context():
     db.create_all()
@@ -26,12 +23,10 @@ if app.config["SQLALCHEMY_DATABASE_URI"].startswith("postgres://"):
     app.config["SQLALCHEMY_DATABASE_URI"] = app.config[
         "SQLALCHEMY_DATABASE_URI"
     ].replace("postgres://", "postgresql://")
-
 login_manager = fl.LoginManager(app)
 login_manager.login_view = "login"
 login_manager.init_app(app)
 socketIo = SocketIO(app, cors_allowed_origins="*")
-# app.debug = True
 
 
 bp = flask.Blueprint(
@@ -52,20 +47,18 @@ def get_business_data(name):
     """Usage: localhost:5000/get_business_data/cafe lucia """
     return get_data(name)
 
-@app.route("/", methods=["POST", "GET"])
+@app.route("/login", methods=["POST", "GET"])
 def login():
     """Login"""
-    if flask.request.method == "POST":
-        username = flask.request.json["username"]
-        p_d = flask.request.json["password"]
-        pd_hash = hashlib.md5(p_d.encode("utf-8")).hexdigest()
-        is_user = user.query.filter_by(username=username).first()
-        if not is_user:
-            return flask.jsonify({"error": "Not found"}), 404
-        if not check_password_hash(is_user.password, pd_hash):
-            return flask.jsonify({"error": "Unathorized"}), 401
-        return flask.jsonify({"id": is_user.id, "username": is_user.username})
-    return flask.jsonify("Not post request")
+    gsu_id = flask.request.json["gsu_id"]
+    password = flask.request.json["password"]
+    isUser = Users.query.filter_by(gsu_id=gsu_id).first()
+    if not isUser:
+        return flask.jsonify({"error": "Not Found"}), 404
+    else:
+        if not check_password_hash(isUser.password, password):
+            return flask.jsonify({"error": "Unauthorized"}), 401
+    return flask.jsonify({"id": isUser.id, "username": isUser.gsu_id})
 
 
 @login_manager.user_loader
@@ -187,13 +180,12 @@ def register():
             level = level,
             primary_major = primary_major,
             phone = phone,
-            alt_email = alt_email
-
+            alt_email = alt_email,
+            password = hashed_password
         )
         db.session.add(new_user)
         db.session.commit()
-    # return flask.jsonify({"id": new_user.id, "gsu_id": new_user.gsu_id})
-    return flask.jsonify({"message": "success"})
+    return flask.jsonify({"message": "No Post Request"})
 
 
 app.register_blueprint(bp)
@@ -206,10 +198,20 @@ if __name__ == "__main__":
     socketIo.run(app,
         host=os.getenv("IP", "0.0.0.0"), port=int(os.getenv("PORT", 8080)), debug=True
     )
+
+# Nur Haque
+# Please make sure the backend code work. While connecting the fronend to the backend I ran into a lot of problem. 
+# This doesn't only include compiling error. Please make sure each route has no error in it. 
+# Hear is great tool for testing the backend: Postman. 
+# You can use the data below to test your the register route. Use similar types of test cases to test each and everyroute in particular thouse of which require
+# a user input
 # {
-#     "f_name" : "Nur",
-#     "l_name": "Haque",
-#     "gsu_id" : "1234",
+#     "f_name" : "firstName",
+#     "l_name": "lastname",
+#     "gsu_id" : "342232332",
 #     "level": "undergrad",
-#     "primary_major" : "Computer science"
+#     "phone": "1234",
+#     "password": "1234",
+#     "primary_major" : "Computer science",
+#     "alt_email": "Email"
 # }
