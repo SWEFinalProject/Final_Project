@@ -26,6 +26,7 @@ class Users(UserMixin, db.Model):
     )
     alt_email = db.Column(db.String(120), unique=False, nullable=True)
     phone = db.Column(db.String(20), unique=False, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
 
     chat_table = db.relationship(
         "Ct",
