@@ -11,6 +11,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from config import ApplicationConfig
 from flask_socketio import SocketIO, send
 
+
 app = flask.Flask(__name__)
 app.config.from_object(ApplicationConfig)
 
@@ -180,17 +181,19 @@ def register():
             return flask.jsonify({"error": "Unauthorized"}), 401
 
         new_user = Users(
-            f_name=f_name,
-            l_name=l_name,
-            gsu_id=gsu_id,
-            level=level,
+            f_name = f_name,
+            l_name = l_name,
+            gsu_id = gsu_id,
+            level = level,
             primary_major = primary_major,
+            phone = phone,
+            alt_email = alt_email
 
         )
         db.session.add(new_user)
         db.session.commit()
-    return flask.jsonify({"id": new_user.id, "gsu_id": new_user.gsu_id})
-    # return flask.jsonify({"message": "success"})
+    # return flask.jsonify({"id": new_user.id, "gsu_id": new_user.gsu_id})
+    return flask.jsonify({"message": "success"})
 
 
 app.register_blueprint(bp)
