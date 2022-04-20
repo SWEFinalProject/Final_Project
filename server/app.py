@@ -172,6 +172,7 @@ def register():
         phone =  flask.request.json["phone"]
         password =  flask.request.json["password"]
         primary_major =  flask.request.json["primary_major"]
+        alt_email = flask.request.json["alt_email"]
 
         hashed_password = generate_password_hash(password, method="sha256")
         user_exists = Users.query.filter_by(gsu_id=gsu_id).first()
