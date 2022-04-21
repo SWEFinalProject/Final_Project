@@ -191,6 +191,18 @@ def yelp_call():
         )
 
 
+@bp.route("/get_restaurant", methods=["GET", "POST"])
+@fl.login_required
+def get_restaurant():
+    yelp_call()
+    if flask.request.method == "POST":
+        name = flask.request.json["name"]
+
+    cur_rest = Restaurant.query.filter_by(name=name).first()
+
+    return flask.jsonify(cur_rest)
+
+
 app.register_blueprint(bp)
 
 # @app.route("/loggeduser", methods=["POST", "GET"])
