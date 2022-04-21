@@ -10,6 +10,7 @@ import hashlib
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import ApplicationConfig
 from flask_socketio import SocketIO, send
+from yelp import get_yelp
 
 app = flask.Flask(__name__)
 app.config.from_object(ApplicationConfig)
@@ -81,6 +82,7 @@ def handleMessage(msg):
 @fl.login_required
 def restaurant():
     """PLACEHOLDER for the route to the restaurant page coming from a SEARCH bar"""
+
     return flask.render_template("restaurant.html")
 
 
@@ -160,12 +162,33 @@ def new_chatroom():
 
     ls_to_add = users_to_add.split(sep=",")
     for user in ls_to_add:
+        user = user.replace(" ", "")
         user_exists = Users.query.filter_by(gsu_id=user).first()
         existing_users.append(user)
 
     new_chatroom = Chatroom(name=name)
     db.session.add(new_chatroom)
     db.session.commit()
+
+
+def yelp_call():
+    data = get_yelp()
+    attributes = ["id", "name", "display_location", "rating", "price", "image_url"]
+    for biz in data:
+        ls = {}
+        for a in attributes:
+            if a not in biz.keys():
+                ls[a] = "None"
+            else:
+                ls[a] = biz[a]
+        new_restaurant = Restaurant(
+            id=ls["id"],
+            name=ls["name"],
+            address=ls["display_location"],
+            rating=ls["rating"],
+            price=ls["price"],
+            image=ls["image_url"],
+        )
 
 
 app.register_blueprint(bp)

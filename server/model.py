@@ -46,6 +46,7 @@ class Restaurant(db.Model):
     address = db.Column(db.String(80), unique=False, nullable=False)
     rating = db.Column(db.Float, default=0)
     price = db.Column(db.Integer)
+    image = db.Column(db.String(500), unique=True, nullable=False)
 
     def __repr__(self):
         return f"{self.name}"
