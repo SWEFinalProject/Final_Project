@@ -22,7 +22,7 @@ function Register() {
       alt_email,
     };
 
-    const responce = await fetch("/register", {
+    const response = await fetch("/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -30,10 +30,11 @@ function Register() {
       },
       body: JSON.stringify(data),
     });
-    console.dir(responce.status);
-    if (responce.status == 401) {
+    // Integrate verify page.
+    console.dir(response.status);
+    if (response.status == 401) {
       console.log("Register unsuccessful");
-    } else if (responce.status == 200) {
+    } else if (response.status == 200) {
       window.location.href = "/login";
     } else {
       console.log("Register unsuccessful");

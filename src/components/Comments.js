@@ -4,12 +4,13 @@ import { Comment, Groups, GroupComment } from "./styles/comments.style";
 import { GroupTab, Labels } from "./styles/GroupTab.style";
 import { CommentBox } from "./styles/commentBox.style";
 
-let endPoint = "http://172.25.35.67:8080/";
+let endPoint = "http://172.27.229.255:8080/";
 let socket = io.connect(`${endPoint}`);
 
 const App = () => {
   const [messages, setMessages] = useState(["Hello And Welcome"]);
   const [message, setMessage] = useState("");
+  const [user, setUser] = useState("");
 
   useEffect(() => {
     getMessages();
@@ -20,11 +21,21 @@ const App = () => {
       setMessages([...messages, msg]);
     });
   };
-
+  const getCurrUser = () => {
+    fetch("/user").then((response) =>
+      response.json().then((data) => {
+        setUser(data);
+      })
+    );
+  };
   // On Change
   const onChange = (e) => {
     setMessage(e.target.value);
   };
+
+  useEffect(() => {
+    getCurrUser();
+  }, []);
 
   // On Click
   const onClick = () => {
@@ -60,7 +71,9 @@ const App = () => {
         {messages.length > 0 &&
           messages.map((msg) => (
             <div>
-              <p>{msg}</p>
+              <p>
+                {user} : {msg}
+              </p>
             </div>
           ))}
         <CommentBox>

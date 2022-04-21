@@ -10,9 +10,11 @@ import hashlib
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import ApplicationConfig
 from flask_socketio import SocketIO, send
+from flask import session
 
 app = flask.Flask(__name__)
 app.config.from_object(ApplicationConfig)
+
 db.init_app(app)
 with app.app_context():
     db.create_all()
@@ -58,7 +60,16 @@ def login():
     else:
         if not check_password_hash(isUser.password, password):
             return flask.jsonify({"error": "Unauthorized"}), 401
+    session["user"] = f"{isUser.f_name } {isUser.l_name }"
     return flask.jsonify({"id": isUser.id, "username": isUser.gsu_id})
+
+@app.route("/user")
+def user():
+    if "user" in session:
+        user = session["user"]
+        return flask.jsonify(user)
+    else:
+        return flask.jsonify({"error": "Unauthorized"}), 401
 
 
 @login_manager.user_loader
@@ -70,49 +81,6 @@ def load_user(user_id):
 def handleMessage(msg):
     print(msg)
     send(msg, broadcast=True)
-
-
-@app.route("/pmain", methods=["POST", "GET"])  # was /loggeduser
-@fl.login_required
-def main():
-    """Not sure what this is doing"""
-    if flask.request.method == "POST":
-        # if flask.request.json.get("action") == "profile":
-        #     return flask.redirect("/profile")
-        # elif flask.request.json.get("action") == "submit":
-        #     # funtion call to handle functionality for submit action(similar to else below)
-        #     pass
-        # review_page(flask.request.form) # what is this?
-        return flask.redirect("/on_submit_button")
-
-    # This function creating a template using .html file
-    # and pass values to the variables in a template
-    ## failing the pylint
-    # pylint: disable=no-value-for-parameter
-    # pylint: disable=unpacking-non-sequence
-    # pylint: disable=undefined-variable
-    name, tagline, genres, poster_path, mov_url, movie_id = get_data()
-    base_url, poster_sizes =  get_config()
-    review = db.engine.execute(
-        f""" select * from "review" where movie_id = '{movie_id}' """
-    ).all()
-    print(review)
-    flask.flash(review)
-    return flask.render_template(
-        ["index.html"],
-        name=name,
-        tagline=tagline,
-        genres=genres,
-        poster_path=poster_path,
-        base_url=base_url,
-        poster_sizes=poster_sizes,
-        url=base_url + poster_sizes + poster_path,
-        movie_url=mov_url,
-            ovie_id=movie_id,
-    )
-
-
-
 
 
 @app.route("/restaurant", methods=["POST", "GET"])
@@ -172,7 +140,6 @@ def register():
         user_exists = Users.query.filter_by(gsu_id=gsu_id).first()
         if user_exists:
             return flask.jsonify({"error": "Unauthorized"}), 401
-
         new_user = Users(
             f_name = f_name,
             l_name = l_name,
@@ -187,9 +154,13 @@ def register():
         db.session.commit()
     return flask.jsonify({"message": "No Post Request"})
 
-
+@app.route("/logout", methods=["GET"])
+def logout():
+    session.pop("user", None)
+    return flask.jsonify("logout Successful")
 app.register_blueprint(bp)
 
+    
 # @app.route("/loggeduser", methods=["POST", "GET"])
 
 
