@@ -11,11 +11,12 @@ chat_table = db.Table(
     ),
 )
 
+
 class Users(UserMixin, db.Model):
     """Defines each user of program, connects to Comments"""
-    
+
     __tablename__ = "user"
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {"extend_existing": True}
     id = db.Column(db.Integer, unique=True)
     gsu_id = db.Column(db.String(30), unique=True, primary_key=True, nullable=False)
     f_name = db.Column(db.String(30), unique=False, nullable=False)
@@ -27,7 +28,6 @@ class Users(UserMixin, db.Model):
     alt_email = db.Column(db.String(120), unique=False, nullable=True)
     phone = db.Column(db.String(20), unique=False, nullable=False)
     password = db.Column(db.String(200), nullable=False)
-
     chat_table = db.relationship(
         "Ct",
         secondary="chat_table",
@@ -55,6 +55,7 @@ class Chatroom(db.Model):
     __tablename__ = "chatroom"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
+    members = db.relationship("Users", backref="chatrooms", lazy=True)
     chat_table = db.relationship(
         "Ct",
         secondary="chat_table",

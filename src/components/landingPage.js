@@ -14,6 +14,10 @@ export default function landingPage() {
   const Register = () => {
     window.location.href = "/register";
   };
+
+  const Login = () => {
+    window.location.href = "/login"
+  };
   return (
     <AppContainer>
       <CollegeLogoOverlay width="60em" height="60em" left="30%" bottom="0%">
@@ -35,7 +39,18 @@ export default function landingPage() {
         color="#374057"
         onClick={Register}
       >
-        <Text color="white">Sign in with Microsoft</Text>
+        <Text color="white">Register</Text>
+      </Button>
+      <Button
+        left="20%"
+        top="80%"
+        color="red"
+        width="20%"
+        height="58px"
+        color="#374057"
+        onClick={Login}
+      >
+        <Text color="white">Log in</Text>
       </Button>
       <Welcome
         color="#374057"
@@ -44,6 +59,7 @@ export default function landingPage() {
         width="600px"
         height="100px"
       >
+
         <h1>
           <WelComeMessage>Welcome To Campus Connect!</WelComeMessage>
         </h1>
