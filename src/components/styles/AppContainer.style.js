@@ -25,3 +25,23 @@ export const CollegeLogo = styled.img`
   left: ${(props) => props.left};
   bottom: ${(props) => props.bottom};
 `;
+
+export const RestuarantContainer = styled.div`
+  padding: 10px;
+  width: 100vw;
+  height: 50vw;
+  background-color:#2B4675;
+  background-size: 100vw;
+`;
+
+export const RestaurantOverlay = styled.div`
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display:flex;
+  flex-flow: column wrap;
+  justify-content:space-around;
+  align-items:center;
+
+`;
