@@ -15,5 +15,6 @@ export const Groups = styled.div`
 `;
 
 export const GroupComment = styled.div`
+  padding: 10px;
   background-color: white;
 `;

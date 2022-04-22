@@ -29,7 +29,3 @@ def get_data(searched_value):
         "business_data": business_data.json() # has all info about searched item
     }
 
-
-
-
-print(get_data("cafe lucia"))
