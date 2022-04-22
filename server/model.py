@@ -31,7 +31,7 @@ class Users(UserMixin, db.Model):
     alt_email = db.Column(db.String(120), unique=False, nullable=True)
     phone = db.Column(db.String(20), unique=False, nullable=False)
     password = db.Column(db.String(200), nullable=False)
-    chatroom_id = db.Column(db.String(30), db.ForeignKey("user.gsu_id"))
+    chatroom_id = db.Column(db.String(30), db.ForeignKey("chatroom.id"))
     """chat_table = db.relationship(
         "Ct",
         secondary="chat_table",
