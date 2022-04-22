@@ -161,6 +161,58 @@ def register():
         db.session.add(new_user)
         db.session.commit()
     return flask.jsonify({"message": "No Post Request"})
+  
+@bp.route("/new_chatroom", methods=["POST"])
+@fl.login_required
+def new_chatroom():
+    existing_users = []
+    if flask.request.method == "POST":
+        name = flask.request.json["name"]
+        users_to_add = flask.request.json["users_to_add"]
+
+    ls_to_add = users_to_add.split(sep=",")
+    for user in ls_to_add:
+        user = user.replace(" ", "")
+        user_exists = Users.query.filter_by(gsu_id=user).first()
+        existing_users.append(user)
+
+    new_chatroom = Chatroom(name=name)
+    db.session.add(new_chatroom)
+    db.session.commit()
+
+@app.route("/fetch_yelp")
+def yelp_call():
+    data = get_yelp()
+    attributes = ["id", "name", "display_location", "rating", "price", "image_url"]
+    new_restaurant = {}
+    for biz in data:
+        ls = {}
+        for a in attributes:
+            if a not in biz.keys():
+                ls[a] = "None"
+            else:
+                ls[a] = biz[a]
+        new_restaurant.append(Restaurant(
+            id=ls["id"],
+            name=ls["name"],
+            address=ls["display_location"],
+            rating=ls["rating"],
+            price=ls["price"],
+            image=ls["image_url"],
+        ))
+    return flask.jsonify()
+
+
+@bp.route("/get_restaurant", methods=["GET", "POST"])
+@fl.login_required
+def get_restaurant():
+    yelp_call()
+    if flask.request.method == "POST":
+        name = flask.request.json["name"]
+
+    cur_rest = Restaurant.query.filter_by(name=name).first()
+
+    return flask.jsonify(cur_rest)
 
 app.register_blueprint(bp)
 
