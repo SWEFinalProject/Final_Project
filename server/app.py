@@ -10,8 +10,9 @@ import hashlib
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import ApplicationConfig
 from flask_socketio import SocketIO, send
+
 from flask import session
-# from yelp import get_yelp
+
 
 app = flask.Flask(__name__)
 app.config.from_object(ApplicationConfig)
