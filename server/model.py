@@ -4,16 +4,6 @@
 from flask_login import UserMixin
 from database import db
 
-"""chat_table = db.Table(
-    # Table combining many to many relationship with reviews table
-    "chat_table",
-    db.Column("ct_id", db.Integer, db.ForeignKey("ct.id"), primary_key=True),
-    db.Column("user_id", db.String(30), db.ForeignKey("user.gsu_id"), primary_key=True),
-    db.Column(
-        "chatroom_id", db.Integer, db.ForeignKey("chatroom.id"), primary_key=True
-    ),
-)"""
-
 
 class Users(UserMixin, db.Model):
     """Defines each user of program, child of one-to-many relationship with chatrooms"""
@@ -32,37 +22,16 @@ class Users(UserMixin, db.Model):
     phone = db.Column(db.String(20), unique=False, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     chatroom_id = db.Column(db.String(30), db.ForeignKey("chatroom.id"))
-    """chat_table = db.relationship(
-        "Ct",
-        secondary="chat_table",
-        lazy="subquery",
-        backref=db.backref("users", lazy=True),
-    )"""
 
     def __repr__(self):
         return f"{self.gsu_id}"
 
 
-class Chatroom(db.Model):
-    """Model for chatrooms, parent of one-to-many relationship for users"""
-
-    __tablename__ = "chatroom"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
-    members = db.relationship("Users", backref="chatroom")
-
-    """chat_table = db.relationship(
-        "Ct",
-        secondary="chat_table",
-        lazy="subquery",
-        backref=db.backref("chatrooms", lazy=True),
-    )
+class Restaurant(db.Model):
+    __tablename__ = "user"
+    __table_args__ = {"extend_existing": True}
+    id = db.Column(db.Integer, unique=True)
+    name = db.Column(db.String(40), unique=True, primary_key=True, nullable=False)
 
     def __repr__(self):
-        return f"{self.name}
-
-
-class Ct(db.Model):
-    # __tablename__ = 'Ct'
-    # __table_args__ = {'extend_existing': True}
-    id = db.Column(db.Integer, primary_key=True)"""
+        return f"{self.name}"
