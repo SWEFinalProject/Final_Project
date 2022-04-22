@@ -43,15 +43,27 @@ class Users(UserMixin, db.Model):
         return f"{self.gsu_id}"
 
 
+class Restaurant(db.Model):
+    __tablename__ = "restaurant"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=True, nullable=False)
+    address = db.Column(db.String(80), unique=False, nullable=False)
+    rating = db.Column(db.Float, default=0)
+    price = db.Column(db.Integer)
+    # image = db.Column(db.String(500), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f"{self.name}"
+
+
 class Chatroom(db.Model):
     """Model for chatrooms, parent of one-to-many relationship for users"""
 
     __tablename__ = "chatroom"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
-    members = db.relationship("Users", backref="chatroom")
-
-    """chat_table = db.relationship(
+    # members = db.relationship("Users", backref="chatrooms", lazy=True)
+    chat_table = db.relationship(
         "Ct",
         secondary="chat_table",
         lazy="subquery",

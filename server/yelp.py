@@ -15,10 +15,9 @@ def get_yelp():
     """This gets the json for the desired movie and then parses out and returns the movie details"""
 
     api_key = os.getenv("API_KEY_YELP")
-
+    print(api_key)
     base_url = "https://api.yelp.com/v3/businesses/search"
     auth_header = {"Authorization": f"bearer {api_key}"}
-
     parameters = {
         "term": "restaurants",
         "limit": 50,

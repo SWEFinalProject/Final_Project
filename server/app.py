@@ -214,6 +214,62 @@ def get_restaurant():
 
     return flask.jsonify(cur_rest)
 
+@app.route("/logout", methods=["GET"])
+def logout():
+    session.pop("user", None)
+    return flask.jsonify("logout Successful")
+
+@bp.route("/new_chatroom", methods=["POST"])
+@fl.login_required
+def new_chatroom():
+    existing_users = []
+    if flask.request.method == "POST":
+        name = flask.request.json["name"]
+        users_to_add = flask.request.json["users_to_add"]
+
+    ls_to_add = users_to_add.split(sep=",")
+    for user in ls_to_add:
+        user = user.replace(" ", "")
+        user_exists = Users.query.filter_by(gsu_id=user).first()
+        existing_users.append(user)
+
+    new_chatroom = Chatroom(name=name)
+    db.session.add(new_chatroom)
+    db.session.commit()
+
+
+def yelp_call():
+    data = get_yelp()
+    attributes = ["id", "name", "display_location", "rating", "price", "image_url"]
+    for biz in data:
+        ls = {}
+        for a in attributes:
+            if a not in biz.keys():
+                ls[a] = "None"
+            else:
+                ls[a] = biz[a]
+        new_restaurant = Restaurant(
+            id=ls["id"],
+            name=ls["name"],
+            address=ls["display_location"],
+            rating=ls["rating"],
+            price=ls["price"],
+            image=ls["image_url"],
+        )
+
+
+@bp.route("/get_restaurant", methods=["GET", "POST"])
+@fl.login_required
+def get_restaurant():
+    yelp_call()
+    if flask.request.method == "POST":
+        name = flask.request.json["name"]
+
+    cur_rest = Restaurant.query.filter_by(name=name).first()
+
+    return flask.jsonify(cur_rest)
+
+
 app.register_blueprint(bp)
 
     
@@ -222,11 +278,9 @@ app.register_blueprint(bp)
 
 if __name__ == "__main__":
     socketIo.run(
-        app,
-        host=os.getenv("IP", "0.0.0.0"),
-        port=int(os.getenv("PORT", 8080)),
-        debug=True,
+        app
     )
+    # app.run(debug=True)
 
 # Nur Haque
 # Please make sure the backend code work. While connecting the fronend to the backend I ran into a lot of problem.
