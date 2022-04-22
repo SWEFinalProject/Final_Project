@@ -170,10 +170,11 @@ def new_chatroom():
     db.session.add(new_chatroom)
     db.session.commit()
 
-
+@app.route("/fetch_yelp")
 def yelp_call():
     data = get_yelp()
     attributes = ["id", "name", "display_location", "rating", "price", "image_url"]
+    new_restaurant = {}
     for biz in data:
         ls = {}
         for a in attributes:
@@ -181,14 +182,15 @@ def yelp_call():
                 ls[a] = "None"
             else:
                 ls[a] = biz[a]
-        new_restaurant = Restaurant(
+        new_restaurant.append(Restaurant(
             id=ls["id"],
             name=ls["name"],
             address=ls["display_location"],
             rating=ls["rating"],
             price=ls["price"],
             image=ls["image_url"],
-        )
+        ))
+    return flask.jsonify()
 
 
 @bp.route("/get_restaurant", methods=["GET", "POST"])
