@@ -50,7 +50,7 @@ function Register() {
       </div>
       <div class="contentBox">
         <div class="formBx">
-          <h2>Login</h2>
+          <h2>Register</h2>
           <form>
             <div class="inputBx">
               <span>First Name: </span>
@@ -143,7 +143,9 @@ function Register() {
             </div>
             <div class="signUp">
               <p>
-                Dont have an account? <a href="/register">Sign up</a>
+                Dont have an account? <a href="/login">Login</a>
+                <br />
+                <a href="/">Return to the home screen?</a>
               </p>
             </div>
           </form>

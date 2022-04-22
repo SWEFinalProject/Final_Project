@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Text } from "./styles/button.style";
 import {
   AppContainer,
@@ -8,7 +8,8 @@ import {
 import "./styles/lp.css";
 import { Welcome, WelComeMessage } from "./styles/Welcome.style";
 
-export default function landingPage() {
+export default function LandingPage() {
+  const [data, setUser] = useState("");
   const TempAPI = () => {
     window.location.href = "/home";
   };
@@ -18,6 +19,23 @@ export default function landingPage() {
 
   const Login = () => {
     window.location.href = "/login";
+  };
+  const getCurrUser = () => {
+    fetch("/user").then((response) =>
+      response.json().then((data) => {
+        setUser(data);
+      })
+    );
+  };
+  useEffect(() => {
+    getCurrUser();
+  }, []);
+  const redirect = () => {
+    if (data.error === "Unauthorized") {
+      window.location.href = "/login";
+    } else {
+      window.location.href = "/home";
+    }
   };
 
   return (
@@ -54,11 +72,11 @@ export default function landingPage() {
                 </li>
                 <li>
                   <a href="#contact" data-after="Contact">
-                    Contact
+                    Contributors
                   </a>
                 </li>
                 <li>
-                  <a onClick={Login}>Login</a>
+                  <a onClick={redirect}>Login</a>
                 </li>
                 <li>
                   <a onClick={Register}>register</a>
