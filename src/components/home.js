@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useEffect, useState } from "react";
 import { Button } from "./styles/button.style";
 import {
   AppContainer,
@@ -10,10 +10,28 @@ import { Welcome, WelComeMessage } from "./styles/Welcome.style";
 import Form from "react-bootstrap/Form";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default function landingPage() {
+export default function LandingPage() {
+  const [user, setUser] = useState("");
   const navigate = () => {
     window.location.href = "/comments";
   };
+  const getCurrUser = () => {
+    fetch("/user").then((response) =>
+      response.json().then((data) => {
+        setUser(data);
+      })
+    );
+  };
+  const logout = () => {
+    fetch("/logout").then((response) =>
+      response.json().then((data) => {
+        console.log(data);
+      })
+    );
+  };
+  useEffect(() => {
+    getCurrUser();
+  }, []);
   return (
     <AppContainer>
       <div className="search">
@@ -27,6 +45,7 @@ export default function landingPage() {
         >
           options
         </Button>
+        <h2>Welcome back {user}</h2>
         <Button
           left="90%"
           top="10px"
@@ -67,6 +86,7 @@ export default function landingPage() {
         <h1>
           <WelComeMessage>Welcome To Campus Connect!</WelComeMessage>
         </h1>
+        <button onClick={logout}>Logout</button>
         <h1>
           <WelComeMessage>Make the most out of your campus!</WelComeMessage>
         </h1>

@@ -32,4 +32,4 @@ def get_data(searched_value):
 
 
 
-#print(get_data("cafe lucia"))
+# print(get_data("cafe lucia"))
