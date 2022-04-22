@@ -88,6 +88,24 @@ export default function landingPage() {
           </div>
         </div>
       </section>
+      <section id="about">
+        <div class="about container">
+          <div class="col-right">
+            <h1 class="section-title">
+              About <span>Us</span>
+            </h1>
+            <h2>Make the most out of your campus!</h2>
+            <p>
+              Campus Connect is a hub where students can interact with their
+              Campus! It allows people to view nearby restaurants, chat with
+              peers in their major, and share their profile with fellow
+              students. Campus Connect allows students, new and old, to better
+              connect with their classmates and find a good lunch within walking
+              distance of their classes.!
+            </p>
+          </div>
+        </div>
+      </section>
       <section id="services">
         <div class="services container">
           <div class="service-top">
@@ -132,24 +150,6 @@ export default function landingPage() {
                 beatae tenetur officia quod
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-      <section id="about">
-        <div class="about container">
-          <div class="col-right">
-            <h1 class="section-title">
-              About <span>Us</span>
-            </h1>
-            <h2>Make the most out of your campus!</h2>
-            <p>
-              Campus Connect is a hub where students can interact with their
-              Campus! It allows people to view nearby restaurants, chat with
-              peers in their major, and share their profile with fellow
-              students. Campus Connect allows students, new and old, to better
-              connect with their classmates and find a good lunch within walking
-              distance of their classes.!
-            </p>
           </div>
         </div>
       </section>
