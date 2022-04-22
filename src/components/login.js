@@ -75,6 +75,8 @@ function Login() {
             <div class="signUp">
               <p>
                 Dont have an account? <a href="/register">Sign up</a>
+                <br />
+                <a href="/">Return to the home screen?</a>
               </p>
             </div>
           </form>
