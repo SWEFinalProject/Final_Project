@@ -11,6 +11,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from config import ApplicationConfig
 from flask_socketio import SocketIO, send
 from flask import session
+# from yelp import get_yelp
 
 app = flask.Flask(__name__)
 app.config.from_object(ApplicationConfig)
@@ -38,16 +39,20 @@ bp = flask.Blueprint(
 )
 
 
-@app.route("/get_all_restaurants",methods=["GET"])
+@app.route("/get_all_restaurants", methods=["GET"])
 def get_all_restaurants():
     """Database classes + table"""
     # rest_list = db.engine.execute(f""" select * from "restaurant"  """).all()
-    #rest_name = [rest1, rest2, ...]
+    # rest_name = [rest1, rest2, ...]
 
-@app.route("/get_business_data/<name>",methods=["GET"]) # name is a value (restaurant's name)
+
+@app.route(
+    "/get_business_data/<name>", methods=["GET"]
+)  # name is a value (restaurant's name)
 def get_business_data(name):
-    """Usage: localhost:5000/get_business_data/cafe lucia """
+    """Usage: localhost:5000/get_business_data/cafe lucia"""
     return get_data(name)
+
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
@@ -77,6 +82,7 @@ def load_user(user_id):
     """Load user for login manager"""
     return Users.query.get(int(user_id))
 
+
 @socketIo.on("message")
 def handleMessage(msg):
     print(msg)
@@ -87,6 +93,7 @@ def handleMessage(msg):
 @fl.login_required
 def restaurant():
     """PLACEHOLDER for the route to the restaurant page coming from a SEARCH bar"""
+
     return flask.render_template("restaurant.html")
 
 
@@ -127,13 +134,13 @@ def register():
     # pylint: disable=no-member
     # pylint: disable=unused-variable
     if flask.request.method == "POST":
-        f_name =  flask.request.json["f_name"]
-        l_name =  flask.request.json["l_name"]
-        gsu_id =  flask.request.json["gsu_id"]
-        level =  flask.request.json["level"]
-        phone =  flask.request.json["phone"]
-        password =  flask.request.json["password"]
-        primary_major =  flask.request.json["primary_major"]
+        f_name = flask.request.json["f_name"]
+        l_name = flask.request.json["l_name"]
+        gsu_id = flask.request.json["gsu_id"]
+        level = flask.request.json["level"]
+        phone = flask.request.json["phone"]
+        password = flask.request.json["password"]
+        primary_major = flask.request.json["primary_major"]
         alt_email = flask.request.json["alt_email"]
 
         hashed_password = generate_password_hash(password, method="sha256")
@@ -141,14 +148,14 @@ def register():
         if user_exists:
             return flask.jsonify({"error": "Unauthorized"}), 401
         new_user = Users(
-            f_name = f_name,
-            l_name = l_name,
-            gsu_id = gsu_id,
-            level = level,
-            primary_major = primary_major,
-            phone = phone,
-            alt_email = alt_email,
-            password = hashed_password
+            f_name=f_name,
+            l_name=l_name,
+            gsu_id=gsu_id,
+            level=level,
+            primary_major=primary_major,
+            phone=phone,
+            alt_email=alt_email,
+            password=hashed_password,
         )
         db.session.add(new_user)
         db.session.commit()
@@ -158,22 +165,74 @@ def register():
 def logout():
     session.pop("user", None)
     return flask.jsonify("logout Successful")
+
+@bp.route("/new_chatroom", methods=["POST"])
+@fl.login_required
+def new_chatroom():
+    existing_users = []
+    if flask.request.method == "POST":
+        name = flask.request.json["name"]
+        users_to_add = flask.request.json["users_to_add"]
+
+    ls_to_add = users_to_add.split(sep=",")
+    for user in ls_to_add:
+        user = user.replace(" ", "")
+        user_exists = Users.query.filter_by(gsu_id=user).first()
+        existing_users.append(user)
+
+    new_chatroom = Chatroom(name=name)
+    db.session.add(new_chatroom)
+    db.session.commit()
+
+
+def yelp_call():
+    data = get_yelp()
+    attributes = ["id", "name", "display_location", "rating", "price", "image_url"]
+    for biz in data:
+        ls = {}
+        for a in attributes:
+            if a not in biz.keys():
+                ls[a] = "None"
+            else:
+                ls[a] = biz[a]
+        new_restaurant = Restaurant(
+            id=ls["id"],
+            name=ls["name"],
+            address=ls["display_location"],
+            rating=ls["rating"],
+            price=ls["price"],
+            image=ls["image_url"],
+        )
+
+
+@bp.route("/get_restaurant", methods=["GET", "POST"])
+@fl.login_required
+def get_restaurant():
+    yelp_call()
+    if flask.request.method == "POST":
+        name = flask.request.json["name"]
+
+    cur_rest = Restaurant.query.filter_by(name=name).first()
+
+    return flask.jsonify(cur_rest)
+
+
 app.register_blueprint(bp)
 
     
 # @app.route("/loggeduser", methods=["POST", "GET"])
 
 
-
 if __name__ == "__main__":
-    socketIo.run(app,
-        host=os.getenv("IP", "0.0.0.0"), port=int(os.getenv("PORT", 8080)), debug=True
+    socketIo.run(
+        app
     )
+    # app.run(debug=True)
 
 # Nur Haque
-# Please make sure the backend code work. While connecting the fronend to the backend I ran into a lot of problem. 
-# This doesn't only include compiling error. Please make sure each route has no error in it. 
-# Hear is great tool for testing the backend: Postman. 
+# Please make sure the backend code work. While connecting the fronend to the backend I ran into a lot of problem.
+# This doesn't only include compiling error. Please make sure each route has no error in it.
+# Hear is great tool for testing the backend: Postman.
 # You can use the data below to test your the register route. Use similar types of test cases to test each and everyroute in particular thouse of which require
 # a user input
 # {
