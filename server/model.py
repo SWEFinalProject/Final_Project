@@ -4,7 +4,7 @@
 from flask_login import UserMixin
 from database import db
 
-"""chat_table = db.Table(
+chat_table = db.Table(
     # Table combining many to many relationship with reviews table
     "chat_table",
     db.Column("ct_id", db.Integer, db.ForeignKey("ct.id"), primary_key=True),
@@ -12,7 +12,7 @@ from database import db
     db.Column(
         "chatroom_id", db.Integer, db.ForeignKey("chatroom.id"), primary_key=True
     ),
-)"""
+)
 
 
 class Users(UserMixin, db.Model):
@@ -71,10 +71,10 @@ class Chatroom(db.Model):
     )
 
     def __repr__(self):
-        return f"{self.name}
+        return f"{self.name}"
 
 
 class Ct(db.Model):
     # __tablename__ = 'Ct'
     # __table_args__ = {'extend_existing': True}
-    id = db.Column(db.Integer, primary_key=True)"""
+    id = db.Column(db.Integer, primary_key=True)

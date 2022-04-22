@@ -103,55 +103,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-      <section id="services">
-        <div class="services container">
-          <div class="service-top">
-            <h1 class="section-title">
-              Facil<span>i</span>ties
-            </h1>
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ipsum
-              deleniti maiores pariatur assumenda quas magni et, doloribus quod
-              voluptate quasi molestiae magnam officiis dolorum, dolor provident
-              atque molestias voluptatum explicabo!
-            </p>
-          </div>
-          <div class="service-bottom">
-            <div class="service-item">
-              <h2>Web Design</h2>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corporis debitis rerum, magni voluptatem sed architecto placeat
-                beatae tenetur officia quod
-              </p>
-            </div>
-            <div class="service-item">
-              <h2>Web Design</h2>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corporis debitis rerum, magni voluptatem sed architecto placeat
-                beatae tenetur officia quod
-              </p>
-            </div>
-            <div class="service-item">
-              <h2>Web Design</h2>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corporis debitis rerum, magni voluptatem sed architecto placeat
-                beatae tenetur officia quod
-              </p>
-            </div>
-            <div class="service-item">
-              <h2>Web Design</h2>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corporis debitis rerum, magni voluptatem sed architecto placeat
-                beatae tenetur officia quod
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
       <section id="about">
         <div class="about container">
           <div class="col-right">
@@ -170,22 +121,68 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      <section id="services">
+        <div class="services container">
+          <div class="service-top">
+            <h1 class="section-title">
+              What<span> we </span>offer
+            </h1>
+            <p>
+              What we offer, we offer to help student grow and become successful
+              in their career of choice. We string to offer the best service
+              possible.
+            </p>
+          </div>
+          <div class="service-bottom">
+            <div class="service-item">
+              <h2>Chat</h2>
+              <p>
+                Have a nice chat with you peers to learn as must as possible
+                about major.
+              </p>
+            </div>
+            <div class="service-item">
+              <h2>Restaurant</h2>
+              <p>
+                Have access to the most popular restaurants around you. Offers
+                you good navigation, reviews, and great item selection with
+                ease.
+              </p>
+            </div>
+            <div class="service-item">
+              <h2>Facility Location</h2>
+              <p>
+                Have access to all your facilities at your dedicated university.
+                Access to location navigation, transportation, hours of
+                operation and more.
+              </p>
+            </div>
+            <div class="service-item">
+              <h2>Web Design</h2>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Corporis debitis rerum, magni voluptatem sed architecto placeat
+                beatae tenetur officia quod
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
       <section id="contact">
         <div class="contact container">
           <div>
             <h1 class="section-title">
-              Contact <span>info</span>
+              <span>contributors</span>
             </h1>
           </div>
           <div class="contact-items">
             <div class="contact-item">
               <div class="icon">
-                <img src="https://img.icons8.com/bubbles/100/000000/phone.png" />
+                <img src="https://img.icons8.com/bubbles/100/000000/new-post.png" />
               </div>
               <div class="contact-info">
-                <h1>Phone</h1>
-                <h2>+1 234 123 1234</h2>
-                <h2>+1 234 123 1234</h2>
+                <h1>Eliza Schuh</h1>
+                <h2>info@gmail.com</h2>
               </div>
             </div>
             <div class="contact-item">
@@ -193,18 +190,26 @@ export default function LandingPage() {
                 <img src="https://img.icons8.com/bubbles/100/000000/new-post.png" />
               </div>
               <div class="contact-info">
-                <h1>Email</h1>
+                <h1>Nur Haque</h1>
                 <h2>info@gmail.com</h2>
-                <h2>abcd@gmail.com</h2>
               </div>
             </div>
             <div class="contact-item">
               <div class="icon">
-                <img src="https://img.icons8.com/bubbles/100/000000/map-marker.png" />
+                <img src="https://img.icons8.com/bubbles/100/000000/new-post.png" />
               </div>
               <div class="contact-info">
-                <h1>Address</h1>
-                <h2>Fatikchhari, Chittagong, Bangladesh</h2>
+                <h1>Anish Ganga</h1>
+                <h2>info@gmail.com</h2>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="icon">
+                <img src="https://img.icons8.com/bubbles/100/000000/new-post.png" />
+              </div>
+              <div class="contact-info">
+                <h2>Alina Nemira</h2>
+                <h2>info@gmail.com</h2>
               </div>
             </div>
           </div>

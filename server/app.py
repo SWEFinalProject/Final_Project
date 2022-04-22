@@ -270,7 +270,7 @@ def get_restaurant():
     return flask.jsonify(cur_rest)
 
 
-app.register_blueprint(bp)
+# app.register_blueprint(bp)
 
     
 # @app.route("/loggeduser", methods=["POST", "GET"])
