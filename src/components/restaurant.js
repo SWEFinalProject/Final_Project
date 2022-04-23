@@ -1,23 +1,24 @@
+import "./styles/lp.css";
 import React, { useState, useEffect } from "react";
 import { Button, Text } from "./styles/button.style";
-import {
-  AppContainer,
-  CollegeLogo,
-  CollegeLogoOverlay,
-} from "./styles/AppContainer.style";
-import "./styles/lp.css";
 import { Welcome, WelComeMessage } from "./styles/Welcome.style";
+
 
 export default function Restaurant() {
 
   const [restaurantName, setRestaurantName] = useState("");
   const [user, setUser] = useState("");
+  const [restaurantData, setRestaurantData] = useState("");
+  const [imgURL, setImgURL] = useState("");
+
 
   const search = async () => {
     
-    const data = restaurantName;
+    const data = {
+      restaurantName,
+    };
 
-    const responce = await fetch("/login", {
+    const responce = await fetch("/search_bar", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,6 +27,20 @@ export default function Restaurant() {
       body: JSON.stringify(data),
     });
 
+
+    const getRestaurantValues = () => {
+      fetch("/search_bar").then((response) =>
+        response.json().then((data) => {
+          setRestaurantData(data);
+        })
+      );
+    };
+
+    setImgURL(restaurantData['business_data']['image_url'])
+    
+  }
+
+  
   const navigate = () => {
     window.location.href = "/comments";
   };
@@ -71,16 +86,6 @@ export default function Restaurant() {
                 </a>
               </li>
               <li>
-                <a href="#about" data-after="About">
-                  About
-                </a>
-              </li>
-              <li>
-                <a href="#services" data-after="Service">
-                  Facilities
-                </a>
-              </li>
-              <li>
                 <a href="#contact" data-after="Contact">
                   Contact
                 </a>
@@ -101,25 +106,41 @@ export default function Restaurant() {
         </div>
       </div>
     </section>
-      <section>
-        <div class="inputBx">
-          <span>Restaurant Name</span>
-          <input
-            type="text"
-            onChange={(e) => setRestaurantName(e.target.value)}
-          ></input>
-        </div>
 
-        <div class="signin">
-          <label>
-            <input
-              type="submit"
-              value="Search"
-              onClick={() => search()}
-            />
-          </label>
+    <div class="contentBox">
+        <div class="formBx">
+          <form>
+            <div class="inputBx">
+              <span>Search Restaurant: </span>
+              <input
+                type="text"
+                required
+                onChange={(e) => setRestaurantName(e.target.value)}
+              ></input>
+              <br />
+              <br />
+            </div>
+
+            <div class="signin">
+              <label>
+                <input
+                  type="submit"
+                  value="Search"
+                  onClick={() => search()}
+                />
+              </label>
+            </div>
+          </form>
         </div>
+      </div>
+
+      <section>
+      <div class="signin">
+        <img src=""/>
+      </div>
       </section>
+
+
       <section id="contact">
         <div class="contact container">
           <div>
@@ -169,5 +190,4 @@ export default function Restaurant() {
       </section>
     </body>
   );
-}
 }
