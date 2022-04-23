@@ -1,13 +1,9 @@
-"""This module is an API set up
-SHOULD WORK WITH YELP API"""
+"""This module is YELP API set up"""
 
 import os
-import random
 import requests
-import sys
 from dotenv import find_dotenv, load_dotenv
 
-print(find_dotenv())
 
 load_dotenv(find_dotenv())
 
@@ -16,7 +12,8 @@ BASE_URL = "https://api.yelp.com/v3/businesses/"
 
 
 def get_data(searched_value):
-    # searched_value -> name of the searched item
+    """function to get business_data
+    about restaurant using a name"""
     _params = {
         "term": searched_value,
         "radius": 2000,
@@ -33,6 +30,3 @@ def get_data(searched_value):
         # "all_data": data.json(),
         "business_data": business_data.json()  # has all info about searched item
     }
-
-
-print(get_data("cafe_lucia"))
