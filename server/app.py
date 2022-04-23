@@ -4,19 +4,13 @@ import flask
 from model import Users, Restaurant, Chatroom, Ct
 from sqlalchemy import PrimaryKeyConstraint
 from database import db
+from flask import session
 from api_setup import get_data
 import flask_login as fl
 import hashlib
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import ApplicationConfig
 from flask_socketio import SocketIO, send
-<<<<<<< HEAD
-from api_setup import get_data
-=======
-
-from flask import session
-
->>>>>>> main
 
 app = flask.Flask(__name__)
 app.config.from_object(ApplicationConfig)
@@ -257,35 +251,7 @@ def search_bar():
 
 # app.register_blueprint(bp)
 
-<<<<<<< HEAD
-=======
-    
-# @app.route("/loggeduser", methods=["POST", "GET"])
-
->>>>>>> main
-
 if __name__ == "__main__":
     socketIo.run(
         app
     )
-<<<<<<< HEAD
-=======
-    # app.run(debug=True)
-
-# Nur Haque
-# Please make sure the backend code work. While connecting the fronend to the backend I ran into a lot of problem.
-# This doesn't only include compiling error. Please make sure each route has no error in it.
-# Hear is great tool for testing the backend: Postman.
-# You can use the data below to test your the register route. Use similar types of test cases to test each and everyroute in particular thouse of which require
-# a user input
-# {
-#     "f_name" : "firstName",
-#     "l_name": "lastname",
-#     "gsu_id" : "342232332",
-#     "level": "undergrad",
-#     "phone": "1234",
-#     "password": "1234",
-#     "primary_major" : "Computer science",
-#     "alt_email": "Email"
-# }
->>>>>>> main
