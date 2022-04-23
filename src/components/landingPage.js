@@ -31,7 +31,7 @@ export default function LandingPage() {
         <div className="header container">
           <div className="nav-bar">
             <div className="brand">
-              <a href="#hero">
+              <a href="#home">
                 <h1>
                   <span>C</span>ampus <span>C</span>onnect
                 </h1>
@@ -43,7 +43,7 @@ export default function LandingPage() {
               </div>
               <ul>
                 <li>
-                  <a href="#hero" data-after="Home">
+                  <a href="#home" data-after="Home">
                     Home
                   </a>
                 </li>
@@ -78,7 +78,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-      <section id="hero">
+      <section id="home">
         <div className="hero container">
           <div>
             <h1>

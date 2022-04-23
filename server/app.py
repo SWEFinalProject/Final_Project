@@ -1,7 +1,7 @@
 """Backend"""
 import os
 import flask
-from model import Users, Restaurant, Chatroom
+from model import Users
 from database import db
 from flask import session
 from api_setup import get_data
@@ -175,15 +175,15 @@ def new_chatroom():
         user_exists = Users.query.filter_by(gsu_id=user).first()
         existing_users.append(user)
 
-    new_chatroom = Chatroom(name=name)
-    db.session.add(new_chatroom)
-    db.session.commit()
+    # new_chatroom = Chatroom(name=name)
+    # db.session.add(new_chatroom)
+    # db.session.commit()
 
 @app.route("/fetch_yelp")
 def yelp_call():
-    data = get_yelp()
+    data = get_data()
     attributes = ["id", "name", "display_location", "rating", "price", "image_url"]
-    new_restaurant = {}
+    # new_restaurant = {}
     for biz in data:
         ls = {}
         for a in attributes:
@@ -191,15 +191,15 @@ def yelp_call():
                 ls[a] = "None"
             else:
                 ls[a] = biz[a]
-        new_restaurant.append(Restaurant(
-            id=ls["id"],
-            name=ls["name"],
-            address=ls["display_location"],
-            rating=ls["rating"],
-            price=ls["price"],
-            image=ls["image_url"],
-        ))
-    return flask.jsonify()
+        # new_restaurant.append(Restaurant(
+        #     id=ls["id"],
+        #     name=ls["name"],
+        #     address=ls["display_location"],
+        #     rating=ls["rating"],
+        #     price=ls["price"],
+        #     image=ls["image_url"],
+        # ))
+    return flask.jsonify(data)
 
 
 @bp.route("/get_restaurant", methods=["GET", "POST"])
@@ -209,7 +209,8 @@ def get_restaurant():
     if flask.request.method == "POST":
         name = flask.request.json["name"]
 
-    cur_rest = Restaurant.query.filter_by(name=name).first()
+    cur_rest = {"restaurant_name":""}
+    # Restaurant.query.filter_by(name=name).first()
 
     return flask.jsonify(cur_rest)
 
@@ -218,24 +219,24 @@ def logout():
     session.pop("user", None)
     return flask.jsonify("logout Successful")
 
-def yelp_call():
-    data = get_yelp()
-    attributes = ["id", "name", "display_location", "rating", "price", "image_url"]
-    for biz in data:
-        ls = {}
-        for a in attributes:
-            if a not in biz.keys():
-                ls[a] = "None"
-            else:
-                ls[a] = biz[a]
-        new_restaurant = Restaurant(
-            id=ls["id"],
-            name=ls["name"],
-            address=ls["display_location"],
-            rating=ls["rating"],
-            price=ls["price"],
-            image=ls["image_url"],
-        )
+# def yelp_call():
+#     data = get_data()
+#     attributes = ["id", "name", "display_location", "rating", "price", "image_url"]
+#     for biz in data:
+#         ls = {}
+#         for a in attributes:
+#             if a not in biz.keys():
+#                 ls[a] = "None"
+#             else:
+#                 ls[a] = biz[a]
+#         new_restaurant = Restaurant(
+#             id=ls["id"],
+#             name=ls["name"],
+#             address=ls["display_location"],
+#             rating=ls["rating"],
+#             price=ls["price"],
+#             image=ls["image_url"],
+#         )
 
 
 @bp.route("/search_bar", methods=["GET", "POST"])
