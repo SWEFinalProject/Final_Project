@@ -70,7 +70,7 @@ const App = () => {
       <GroupComment>
         {messages.length > 0 &&
           messages.map((msg) => (
-            <div>
+            <div key="msg">
               <p>
                 {user} : {msg}
               </p>

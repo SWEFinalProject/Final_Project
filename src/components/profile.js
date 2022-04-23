@@ -2,11 +2,8 @@ import React from "react";
 import { Button } from "./styles/button.style";
 import {
   AppContainer,
-  CollegeLogo,
   CollegeLogoOverlay,
 } from "./styles/AppContainer.style";
-import { Welcome, WelComeMessage } from "./styles/Welcome.style";
-import Form from "react-bootstrap/Form";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function profilePage() {
