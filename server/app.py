@@ -1,22 +1,15 @@
+# pylint: disable=E0401, R0903, R1705
 """Backend"""
 import os
 import flask
-from model import Users, Restaurant, Chatroom, Ct
-from sqlalchemy import PrimaryKeyConstraint
+from flask import session
+from model import Users
 from database import db
 from api_setup import get_data
 import flask_login as fl
-import hashlib
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import ApplicationConfig
 from flask_socketio import SocketIO, send
-<<<<<<< HEAD
-from api_setup import get_data
-=======
-
-from flask import session
-
->>>>>>> main
 
 app = flask.Flask(__name__)
 app.config.from_object(ApplicationConfig)
@@ -24,7 +17,7 @@ app.config.from_object(ApplicationConfig)
 db.init_app(app)
 with app.app_context():
     db.create_all()
-    user = Users.query.all()
+    all_user = Users.query.all()
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB")
 if app.config["SQLALCHEMY_DATABASE_URI"].startswith("postgres://"):
@@ -64,20 +57,23 @@ def login():
     """Login"""
     gsu_id = flask.request.json["gsu_id"]
     password = flask.request.json["password"]
-    isUser = Users.query.filter_by(gsu_id=gsu_id).first()
-    if not isUser:
+    is_user = Users.query.filter_by(gsu_id=gsu_id).first()
+    if not is_user:
         return flask.jsonify({"error": "Not Found"}), 404
     else:
-        if not check_password_hash(isUser.password, password):
+        if not check_password_hash(is_user.password, password):
             return flask.jsonify({"error": "Unauthorized"}), 401
-    session["user"] = f"{isUser.f_name } {isUser.l_name }"
-    return flask.jsonify({"id": isUser.id, "username": isUser.gsu_id})
+    session["user"] = f"{is_user.f_name } {is_user.l_name }"
+    session["gsu_id"] = f"{is_user.gsu_id}"
+    return flask.jsonify({"id": is_user.id, "username": is_user.gsu_id})
+
 
 @app.route("/user")
 def user():
+    """Sends User's first and last name to frontend"""
     if "user" in session:
-        user = session["user"]
-        return flask.jsonify(user)
+        my_user = session["user"]
+        return flask.jsonify(my_user)
     else:
         return flask.jsonify({"error": "Unauthorized"}), 401
 
@@ -89,7 +85,8 @@ def load_user(user_id):
 
 
 @socketIo.on("message")
-def handleMessage(msg):
+def handle_message(msg):
+    """sends message to clients using socket"""
     print(msg)
     send(msg, broadcast=True)
 
@@ -109,6 +106,24 @@ def restaurant():
 def profile():
     """Profile"""
     return flask.render_template("profile.html")
+
+
+@app.route("/profile_query", methods=["POST", "GET"])
+def profile_query():
+    """Profile query from db"""
+    gsu_id = session["gsu_id"]
+    my_user = Users.query.filter_by(gsu_id=gsu_id).first()
+    return flask.jsonify(
+        {
+            "GSU ID": my_user.gsu_id,
+            "f_name": my_user.f_name,
+            "l_name": my_user.l_name,
+            "level": my_user.level,
+            "major": my_user.primary_major,
+            "alt_email": my_user.alt_email,
+            "phone": my_user.phone,
+        }
+    )
 
 
 # route for serving React page
@@ -165,88 +180,19 @@ def register():
         db.session.add(new_user)
         db.session.commit()
     return flask.jsonify({"message": "No Post Request"})
-  
-@bp.route("/new_chatroom", methods=["POST"])
-@fl.login_required
-def new_chatroom():
-    existing_users = []
-    if flask.request.method == "POST":
-        name = flask.request.json["name"]
-        users_to_add = flask.request.json["users_to_add"]
 
-    ls_to_add = users_to_add.split(sep=",")
-    for user in ls_to_add:
-        user = user.replace(" ", "")
-        user_exists = Users.query.filter_by(gsu_id=user).first()
-        existing_users.append(user)
-
-    new_chatroom = Chatroom(name=name)
-    db.session.add(new_chatroom)
-    db.session.commit()
-
-@app.route("/fetch_yelp")
-def yelp_call():
-    data = get_yelp()
-    attributes = ["id", "name", "display_location", "rating", "price", "image_url"]
-    new_restaurant = {}
-    for biz in data:
-        ls = {}
-        for a in attributes:
-            if a not in biz.keys():
-                ls[a] = "None"
-            else:
-                ls[a] = biz[a]
-        new_restaurant.append(Restaurant(
-            id=ls["id"],
-            name=ls["name"],
-            address=ls["display_location"],
-            rating=ls["rating"],
-            price=ls["price"],
-            image=ls["image_url"],
-        ))
-    return flask.jsonify()
-
-
-@bp.route("/get_restaurant", methods=["GET", "POST"])
-@fl.login_required
-def get_restaurant():
-    yelp_call()
-    if flask.request.method == "POST":
-        name = flask.request.json["name"]
-
-    cur_rest = Restaurant.query.filter_by(name=name).first()
-
-    return flask.jsonify(cur_rest)
 
 @app.route("/logout", methods=["GET"])
 def logout():
+    """Logs out users"""
     session.pop("user", None)
     return flask.jsonify("logout Successful")
-
-def yelp_call():
-    data = get_yelp()
-    attributes = ["id", "name", "display_location", "rating", "price", "image_url"]
-    for biz in data:
-        ls = {}
-        for a in attributes:
-            if a not in biz.keys():
-                ls[a] = "None"
-            else:
-                ls[a] = biz[a]
-        new_restaurant = Restaurant(
-            id=ls["id"],
-            name=ls["name"],
-            address=ls["display_location"],
-            rating=ls["rating"],
-            price=ls["price"],
-            image=ls["image_url"],
-        )
 
 
 @bp.route("/search_bar", methods=["GET", "POST"])
 @fl.login_required
 def search_bar():
-
+    """defines search bar for yelp api"""
     if flask.request.method == "POST":
         rest_name = flask.request.json["name"]
 
@@ -257,35 +203,5 @@ def search_bar():
 
 # app.register_blueprint(bp)
 
-<<<<<<< HEAD
-=======
-    
-# @app.route("/loggeduser", methods=["POST", "GET"])
-
->>>>>>> main
-
 if __name__ == "__main__":
-    socketIo.run(
-        app
-    )
-<<<<<<< HEAD
-=======
-    # app.run(debug=True)
-
-# Nur Haque
-# Please make sure the backend code work. While connecting the fronend to the backend I ran into a lot of problem.
-# This doesn't only include compiling error. Please make sure each route has no error in it.
-# Hear is great tool for testing the backend: Postman.
-# You can use the data below to test your the register route. Use similar types of test cases to test each and everyroute in particular thouse of which require
-# a user input
-# {
-#     "f_name" : "firstName",
-#     "l_name": "lastname",
-#     "gsu_id" : "342232332",
-#     "level": "undergrad",
-#     "phone": "1234",
-#     "password": "1234",
-#     "primary_major" : "Computer science",
-#     "alt_email": "Email"
-# }
->>>>>>> main
+    socketIo.run(app)
