@@ -1,7 +1,7 @@
 """Backend"""
 import os
 import flask
-from model import Users, Restaurant, Chatroom, Ct
+from model import Users
 from sqlalchemy import PrimaryKeyConstraint
 from database import db
 from flask import session
