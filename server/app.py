@@ -10,9 +10,13 @@ import hashlib
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import ApplicationConfig
 from flask_socketio import SocketIO, send
+<<<<<<< HEAD
+from api_setup import get_data
+=======
 
 from flask import session
 
+>>>>>>> main
 
 app = flask.Flask(__name__)
 app.config.from_object(ApplicationConfig)
@@ -219,25 +223,6 @@ def logout():
     session.pop("user", None)
     return flask.jsonify("logout Successful")
 
-@bp.route("/new_chatroom", methods=["POST"])
-@fl.login_required
-def new_chatroom():
-    existing_users = []
-    if flask.request.method == "POST":
-        name = flask.request.json["name"]
-        users_to_add = flask.request.json["users_to_add"]
-
-    ls_to_add = users_to_add.split(sep=",")
-    for user in ls_to_add:
-        user = user.replace(" ", "")
-        user_exists = Users.query.filter_by(gsu_id=user).first()
-        existing_users.append(user)
-
-    new_chatroom = Chatroom(name=name)
-    db.session.add(new_chatroom)
-    db.session.commit()
-
-
 def yelp_call():
     data = get_yelp()
     attributes = ["id", "name", "display_location", "rating", "price", "image_url"]
@@ -258,28 +243,33 @@ def yelp_call():
         )
 
 
-@bp.route("/get_restaurant", methods=["GET", "POST"])
+@bp.route("/search_bar", methods=["GET", "POST"])
 @fl.login_required
-def get_restaurant():
-    yelp_call()
+def search_bar():
+
     if flask.request.method == "POST":
-        name = flask.request.json["name"]
+        rest_name = flask.request.json["name"]
 
-    cur_rest = Restaurant.query.filter_by(name=name).first()
+    data = get_data(rest_name)
 
-    return flask.jsonify(cur_rest)
+    return flask.jsonify(data)
 
 
 # app.register_blueprint(bp)
 
+<<<<<<< HEAD
+=======
     
 # @app.route("/loggeduser", methods=["POST", "GET"])
 
+>>>>>>> main
 
 if __name__ == "__main__":
     socketIo.run(
         app
     )
+<<<<<<< HEAD
+=======
     # app.run(debug=True)
 
 # Nur Haque
@@ -298,3 +288,4 @@ if __name__ == "__main__":
 #     "primary_major" : "Computer science",
 #     "alt_email": "Email"
 # }
+>>>>>>> main
