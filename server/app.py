@@ -244,7 +244,7 @@ def logout():
 def search_bar():
 
     if flask.request.method == "POST":
-        rest_name = flask.request.json["name"]
+        rest_name = flask.request.json["restaurantName"]
 
     data = get_data(rest_name)
 
@@ -257,3 +257,15 @@ if __name__ == "__main__":
     socketIo.run(
         app
     )
+    
+# Please make sure the backend code work. While connecting the fronend to the backend I ran into a lot of problem.
+# This doesn't only include compiling error. Please make sure each route has no error in it.
+# Hear is great tool for testing the backend: Postman.
+# You can use the data below to test your the register route. Use similar types of test cases to test each and everyroute in particular thouse of which require
+# a user input
+#     "l_name": "lastname",
+#     "gsu_id" : "342232332",
+#     "level": "undergrad",
+#     "password": "1234",
+#     "primary_major" : "Computer science",
+# }

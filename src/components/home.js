@@ -23,6 +23,9 @@ export default function LandingPage() {
   const chatRoom = () => {
     window.location.href = "/comments";
   };
+  const restaurant = () => {
+    window.location.href = "/restaurant";
+  };
   useEffect(() => {
     getCurrUser();
   }, []);
@@ -69,6 +72,9 @@ export default function LandingPage() {
                 </li>
                 <li>
                   <a onClick={chatRoom}>ChatRoom</a>
+                </li>
+                <li>
+                  <a onClick={restaurant}>Restaurant</a>
                 </li>
                 <li>
                   <a href="#projects" data-after="Projects">
