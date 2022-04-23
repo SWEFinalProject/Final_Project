@@ -7,6 +7,7 @@ import Register from "./components/Register";
 import Login from "./components/login";
 import NotFound from "./components/notFound";
 import Protected from "./components/protected";
+import Restaurant from "./components/restaurant";
 
 const Router = () => {
   return (
@@ -16,6 +17,7 @@ const Router = () => {
           <Route exact path="/comments" component={Comments} />
           <Protected exact path="/home" component={Home} />
           <Route exact path="/profile" component={Profile} />
+          <Route exact path="/restaurant" component={Restaurant} />
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/" component={LandingPage} />

@@ -1,7 +1,6 @@
 """This file includes models for Postgresql DB"""
 # pylint: disable=E0401, R0903
 
-from flask_login import UserMixin
 from database import db
 
 chat_table = db.Table(
