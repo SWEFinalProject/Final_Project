@@ -2,6 +2,7 @@
 import os
 import flask
 from model import Users
+from sqlalchemy import PrimaryKeyConstraint
 from database import db
 from flask import session
 from api_setup import get_data
