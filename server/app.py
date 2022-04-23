@@ -3,13 +3,12 @@ import os
 import flask
 from model import Users, Restaurant, Chatroom
 from database import db
+from flask import session
 from api_setup import get_data
 import flask_login as fl
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import ApplicationConfig
 from flask_socketio import SocketIO, send
-from flask import session
-
 
 app = flask.Flask(__name__)
 app.config.from_object(ApplicationConfig)
@@ -219,25 +218,6 @@ def logout():
     session.pop("user", None)
     return flask.jsonify("logout Successful")
 
-@bp.route("/new_chatroom", methods=["POST"])
-@fl.login_required
-def new_chatroom():
-    existing_users = []
-    if flask.request.method == "POST":
-        name = flask.request.json["name"]
-        users_to_add = flask.request.json["users_to_add"]
-
-    ls_to_add = users_to_add.split(sep=",")
-    for user in ls_to_add:
-        user = user.replace(" ", "")
-        user_exists = Users.query.filter_by(gsu_id=user).first()
-        existing_users.append(user)
-
-    new_chatroom = Chatroom(name=name)
-    db.session.add(new_chatroom)
-    db.session.commit()
-
-
 def yelp_call():
     data = get_yelp()
     attributes = ["id", "name", "display_location", "rating", "price", "image_url"]
@@ -258,43 +238,21 @@ def yelp_call():
         )
 
 
-@bp.route("/get_restaurant", methods=["GET", "POST"])
+@bp.route("/search_bar", methods=["GET", "POST"])
 @fl.login_required
-def get_restaurant():
-    yelp_call()
+def search_bar():
+
     if flask.request.method == "POST":
-        name = flask.request.json["name"]
+        rest_name = flask.request.json["name"]
 
-    cur_rest = Restaurant.query.filter_by(name=name).first()
+    data = get_data(rest_name)
 
-    return flask.jsonify(cur_rest)
+    return flask.jsonify(data)
 
 
 # app.register_blueprint(bp)
-
-    
-# @app.route("/loggeduser", methods=["POST", "GET"])
-
 
 if __name__ == "__main__":
     socketIo.run(
         app
     )
-    # app.run(debug=True)
-
-# Nur Haque
-# Please make sure the backend code work. While connecting the fronend to the backend I ran into a lot of problem.
-# This doesn't only include compiling error. Please make sure each route has no error in it.
-# Hear is great tool for testing the backend: Postman.
-# You can use the data below to test your the register route. Use similar types of test cases to test each and everyroute in particular thouse of which require
-# a user input
-# {
-#     "f_name" : "firstName",
-#     "l_name": "lastname",
-#     "gsu_id" : "342232332",
-#     "level": "undergrad",
-#     "phone": "1234",
-#     "password": "1234",
-#     "primary_major" : "Computer science",
-#     "alt_email": "Email"
-# }
