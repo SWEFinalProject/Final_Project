@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 function Register() {
   const [f_name, setF_name] = useState("");
@@ -42,17 +42,17 @@ function Register() {
   };
   return (
     <section>
-      <div class="imgBx">
+      <div className="imgBx">
         <img
           src="https://sec.gsu.edu/files/2021/01/feature-image-ADM-APPLY-1.jpg"
           alt="image"
         />
       </div>
-      <div class="contentBox">
-        <div class="formBx">
+      <div className="contentBox">
+        <div className="formBx">
           <h2>Register</h2>
           <form>
-            <div class="inputBx">
+            <div className="inputBx">
               <span>First Name: </span>
               <input
                 type="text"
@@ -132,7 +132,7 @@ function Register() {
               <br />
             </div>
 
-            <div class="signin">
+            <div className="signin">
               <label>
                 <input
                   type="submit"
@@ -141,7 +141,7 @@ function Register() {
                 />
               </label>
             </div>
-            <div class="signUp">
+            <div className="signUp">
               <p>
                 Dont have an account? <a href="/login">Login</a>
                 <br />
